@@ -1,0 +1,32 @@
+# Hand-written tasks for `placebo ab --tasks examples/tasks.yaml`.
+# Each task starts from `base` (default HEAD) in a fresh git worktree.
+# A trial passes when every `checks` command exits 0.
+
+defaults:
+  setup:
+    - python -m pip install -q -e .
+  timeout_s: 600
+
+tasks:
+  - id: slugify-helper
+    prompt: |
+      Add a `slugify(text: str) -> str` function to `mypkg/text.py` that lowercases the text,
+      replaces runs of non-alphanumeric characters with a single hyphen and strips leading/trailing
+      hyphens. Add tests for it.
+    files:
+      # A hidden acceptance test the agent does not see in the prompt:
+      tests/test_slugify_acceptance.py: |
+        from mypkg.text import slugify
+
+        def test_basic():
+            assert slugify("Hello, World!") == "hello-world"
+
+        def test_edges():
+            assert slugify("  --Already--Slugged--  ") == "already-slugged"
+    checks:
+      - python -m pytest -q tests/test_slugify_acceptance.py
+
+  - id: changelog-entry
+    prompt: Add an entry for version 1.4.0 to CHANGELOG.md describing the new slugify helper.
+    checks:
+      - python -c "import sys; t=open('CHANGELOG.md').read(); sys.exit(0 if '1.4.0' in t and 'slugify' in t.lower() else 1)"

@@ -1,0 +1,9 @@
+# Probes for `placebo trigger examples/skills/commit-messages --probes examples/triggers.yaml`.
+should_trigger:
+  - "commit what I just changed"
+  - "can you write a good commit message for the staged diff?"
+  - "wrap this up in a commit please, the fix for the login redirect"
+should_not_trigger:
+  - "explain what git rebase does"
+  - "write release notes for v2.0"
+  - "rename the variable `usr` to `user` in auth.py"

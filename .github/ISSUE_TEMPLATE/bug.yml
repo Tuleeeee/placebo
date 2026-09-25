@@ -1,0 +1,28 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include the command you ran and the output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Output of `placebo doctor` (placebo, Python, OS, agent versions)
+    validations:
+      required: true
+  - type: textarea
+    id: trace
+    attributes:
+      label: Trace excerpt (optional)
+      description: For agent-parsing bugs, a few lines from `.placebo/runs/<run>/traces/*.jsonl`. **Remove secrets and personal paths first.**
+      render: json

@@ -1,0 +1,28 @@
+name: New agent adapter
+description: Request (or offer to build) support for another coding agent
+labels: [adapter, help wanted]
+body:
+  - type: input
+    id: agent
+    attributes:
+      label: Agent
+      placeholder: e.g. Gemini CLI 0.x, OpenCode 1.x
+    validations:
+      required: true
+  - type: textarea
+    id: headless
+    attributes:
+      label: Headless invocation
+      description: How to run it non-interactively with machine-readable (JSON) output, and how it receives the prompt.
+  - type: textarea
+    id: skills
+    attributes:
+      label: Skill locations
+      description: Where the agent reads user-level and project-level skills, and how skill use shows up in its output.
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Can you help?
+      options:
+        - label: I can record a (sanitized) trace
+        - label: I'd like to implement the adapter

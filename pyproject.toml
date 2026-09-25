@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "placebo-cli"
+version = "0.1.0"
+description = "Is your agent skill a placebo? Controlled A/B trials for Agent Skills and AGENTS.md on your own repo, across coding agents."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Placebo contributors" }]
+keywords = [
+  "agent-skills", "claude-code", "codex", "coding-agents", "ai-evals",
+  "ab-testing", "skill-md", "agents-md", "llm", "evaluation",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "pyyaml>=6.0",
+  "rich>=13.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/Tuleeeee/placebo"
+Repository = "https://github.com/Tuleeeee/placebo"
+Issues = "https://github.com/Tuleeeee/placebo/issues"
+Changelog = "https://github.com/Tuleeeee/placebo/blob/main/CHANGELOG.md"
+
+[project.scripts]
+placebo = "placebo_cli.cli:main"
+placebo-cli = "placebo_cli.cli:main"  # so `uvx placebo-cli` / `pipx run placebo-cli` work
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/placebo_cli"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/placebo_cli", "tests", "examples", "README.md", "LICENSE", "METHODOLOGY.md", "CHANGELOG.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,33 @@
+name: "placebo scan"
+description: "Static analysis of agent skills: context-token cost, collisions, lint, broken references and security flags."
+branding:
+  icon: "check-circle"
+  color: "purple"
+inputs:
+  path:
+    description: "Directory containing skills (every SKILL.md below it is scanned)"
+    default: "."
+  fail-on:
+    description: "Fail the job if a security flag at or above this severity exists (low|medium|high|critical, or empty to never fail)"
+    default: "high"
+  version:
+    description: "placebo-cli version to install (default: latest)"
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install placebo
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.version }}" ]; then pip install "placebo-cli==${{ inputs.version }}"; else pip install placebo-cli; fi
+    - name: Scan skills
+      shell: bash
+      env:
+        COLUMNS: "140"
+      run: |
+        args=("${{ inputs.path }}")
+        if [ -n "${{ inputs.fail-on }}" ]; then args+=(--fail-on "${{ inputs.fail-on }}"); fi
+        placebo scan "${args[@]}" --json placebo-scan.json
