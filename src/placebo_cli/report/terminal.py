@@ -31,12 +31,30 @@ VERDICT_BLURB = {
 }
 
 
+LINT_SUMMARY = {
+    "L003": "names are not lowercase-hyphen",
+    "L006": "descriptions too short to trigger reliably",
+    "L007": "descriptions over the 1024-char limit (paid on every request)",
+    "L009": "SKILL.md bodies over 500 lines or ~5k tokens",
+}
+
+
 def _short(p: str, n: int = 60) -> str:
     return p if len(p) <= n else "…" + p[-(n - 1):]
 
 
+def _display_path(p: str) -> str:
+    path = Path(p)
+    try:
+        rel = path.resolve().relative_to(Path.cwd().resolve())
+        return str(rel) if str(rel) != "." else "."
+    except ValueError:
+        parts = path.parts
+        return str(Path(*parts[-2:])) if len(parts) > 2 else p
+
+
 def render_scan(r: ScanReport, console: Console, verbose: bool = False, top: int = 12) -> None:
-    title = "installed skills" if r.mode == "installed" else f"skills under {r.root}"
+    title = "installed skills" if r.mode == "installed" else f"skills under {_display_path(r.root)}"
     console.print(Text.assemble(("placebo scan", "bold"), (f" · {title}", "dim")))
     if not r.skills:
         console.print("\nNo skills found." + (" Looked in:" if r.locations else ""))
@@ -96,7 +114,7 @@ def render_scan(r: ScanReport, console: Console, verbose: bool = False, top: int
         console.print()
         console.print("[bold]Duplicates[/bold]")
         for d in r.duplicates:
-            kind = "identical copies" if d.identical else "[yellow]same name, different content[/yellow]"
+            kind = "identical copies" if d.identical else "[yellow]skills share this name with different content[/yellow]"
             console.print(f"  {d.name}: {len(d.paths)} {kind}")
 
     sec = [f for f in r.security if verbose or f.severity != "low"]
@@ -119,11 +137,28 @@ def render_scan(r: ScanReport, console: Console, verbose: bool = False, top: int
     if lint:
         console.print()
         console.print("[bold]Lint[/bold]")
-        for i in lint[: (200 if verbose else 15)]:
-            style = {"error": "red", "warn": "yellow", "info": "dim"}[i.level]
-            console.print(f"  [{style}]{i.level:5}[/{style}] {i.code} {i.skill}: {i.message}")
-        if len(lint) > 15 and not verbose:
-            console.print(f"[dim]  … {len(lint) - 15} more (use --verbose)[/dim]")
+        styles = {"error": "red", "warn": "yellow", "info": "dim"}
+        if verbose:
+            for i in lint:
+                console.print(f"  [{styles[i.level]}]{i.level:5}[/] {i.code} {i.skill}: {i.message}")
+        else:
+            # errors individually; warnings grouped by rule so big skill packs stay readable
+            for i in [i for i in lint if i.level == "error"][:15]:
+                console.print(f"  [red]error[/] {i.code} {i.skill}: {i.message}")
+            groups: dict[str, list] = {}
+            for i in lint:
+                if i.level == "warn":
+                    groups.setdefault(i.code, []).append(i)
+            for code, items in sorted(groups.items(), key=lambda kv: -len(kv[1])):
+                names = ", ".join(sorted({i.skill for i in items})[:4])
+                more = "" if len(items) <= 4 else f", … (+{len(items) - 4})"
+                if len(items) == 1:
+                    console.print(f"  [yellow]warn [/] {code} {items[0].skill}: {items[0].message}")
+                else:
+                    console.print(f"  [yellow]warn [/] {code} ×{len(items)} {LINT_SUMMARY.get(code, items[0].message)}: [dim]{names}{more}[/dim]")
+            n_info = sum(1 for i in r.lint if i.level == "info")
+            if n_info:
+                console.print(f"[dim]  + {n_info} info-level notes (use --verbose)[/dim]")
 
     if r.broken_refs:
         console.print()

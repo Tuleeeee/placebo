@@ -14,5 +14,10 @@ First public release.
   randomized interleaving; two-level bootstrap CIs, McNemar, TOST equivalence; verdicts HELPS / HURTS /
   PLACEBO / INCONCLUSIVE / NOT_ACTIVATED; single-file HTML report; budgets, resume and a circuit
   breaker for agents that fail to start.
+- `placebo scan --svg` to share a scan as an image; lint warnings grouped by rule.
+- Fewer false positives: attack phrases quoted inside defensive instructions are low severity,
+  "don't tell the user" matching is stricter, and broken-reference checks ignore code blocks,
+  placeholder links, project paths and plugin-root-relative paths (validated on the five most-starred
+  skill packs; see `reports/2026-09-top-skill-packs.md`).
 - `placebo tasks mine`, `placebo report`, `placebo doctor`.
 - Adapters: Claude Code (tested against real 2.1.281 output), Codex (beta, format-based).

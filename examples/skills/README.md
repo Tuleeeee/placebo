@@ -6,6 +6,8 @@ A small set of skills to try Placebo on:
 placebo scan examples/skills
 ```
 
+![placebo scan examples/skills](../../docs/assets/scan-examples.svg)
+
 They intentionally include problems for the scanner to find:
 
 - `commit-messages` and `git-commit-style` overlap: both claim "write commit messages", so an agent has to guess which to use.

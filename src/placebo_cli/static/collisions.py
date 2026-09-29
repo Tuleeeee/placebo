@@ -104,7 +104,7 @@ def find_collisions(skills: list[Skill], threshold: float = 0.35, max_pairs: int
             small, big = (vi, vj) if len(vi) < len(vj) else (vj, vi)
             sim = sum(x * big.get(t, 0.0) for t, x in small.items())
             if sim >= threshold:
-                shared = [_surface(t) for t in sorted(set(vi) & set(vj), key=lambda t: -(vi[t] * vj[t]))[:6]]
+                shared = [_surface(t) for t in sorted(set(vi) & set(vj), key=lambda t: -(vi[t] * vj[t]))[:4]]
                 out.append(Collision(
                     skills[i].display_name, skills[j].display_name,
                     str(skills[i].path), str(skills[j].path), round(sim, 3), shared,

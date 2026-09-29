@@ -71,6 +71,13 @@ def cmd_scan(args: argparse.Namespace) -> int:
             return 0
         Path(args.json).write_text(data, encoding="utf-8")
     render_scan(report, console, verbose=args.verbose, top=args.top)
+    if args.svg:
+        import io
+
+        rec = Console(record=True, width=args.svg_width, force_terminal=True, color_system="truecolor", file=io.StringIO())
+        render_scan(report, rec, verbose=args.verbose, top=args.top)
+        rec.save_svg(args.svg, title="placebo scan")
+        console.print(f"[dim]SVG written to {args.svg}[/dim]")
     if args.json and args.json != "-":
         console.print(f"[dim]JSON written to {args.json}[/dim]")
     if args.fail_on:
@@ -384,6 +391,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--threshold", type=float, default=0.35, help="collision similarity threshold (0-1)")
     s.add_argument("--top", type=int, default=12, help="how many skills to list")
     s.add_argument("--json", metavar="FILE", help="write the full report as JSON ('-' for stdout)")
+    s.add_argument("--svg", metavar="FILE", help="also save the report as a shareable SVG image")
+    s.add_argument("--svg-width", type=int, default=110, help=argparse.SUPPRESS)
     s.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="exit 2 if a flag this severe exists (CI)")
     s.add_argument("-v", "--verbose", action="store_true")
     s.set_defaults(func=cmd_scan)

@@ -13,6 +13,9 @@ Controlled A/B trials for Agent Skills and AGENTS.md, on your own repo, with a s
 uvx placebo-cli scan          # or: pipx run placebo-cli scan
 ```
 
+<p align="center"><img src="reports/assets/2026-09-top5-skill-packs-scan.svg" width="820" alt="placebo scan output for the five most-starred skill packs installed together"></p>
+<p align="center"><sub>Real output: the five most-starred skill packs installed together, <b>389 skills, ~35.5k tokens listed on every request, 73 competing pairs</b>. <a href="reports/2026-09-top-skill-packs.md">Full report</a></sub></p>
+
 ---
 
 ## Why this exists
@@ -78,7 +81,7 @@ Broken references
  4 skills · ~180 tokens always loaded if all installed · 1 colliding pair · 0 high-severity flags
 ```
 
-Use it in CI with `placebo scan path/to/skills --fail-on high` (exit code 2 when a flag at or above that severity exists). A composite GitHub Action is included; see [action.yml](action.yml).
+Share results with `--svg scan.svg` (an image like the one above) or `--json`. Use it in CI with `placebo scan path/to/skills --fail-on high` (exit code 2 when a flag at or above that severity exists). A composite GitHub Action is included; see [action.yml](action.yml).
 
 ## `placebo trigger`: does the skill fire?
 
